@@ -1,16 +1,16 @@
-# SightlineSafari
+# StreetObjectFinder
 ## Using computer vision to find and seek objects on street view images
 
 The goal of this project is to allow street object identification and geolocation using computer vision, depth estimatition and google street view images.
 
 ## Overview
-SightlineSafari achieves the complex task of urban object recognition through a multi-step process:
+StreetObjectFinder achieves the complex task of urban object recognition through a multi-step process:
 
 * **Location Selection** - Define starting points for object search using latitude and longitude.
 * **Panorama Retrieval** - Access the nearest Google Street View images to the chosen locations.
 * **Coarse Object Identification** - Use computer vision to detect objects within these panoramic images.
 * **Geolocation Estimate** - Calculate objects' positions based on image data and monocular depth estimation models.
-* **"Safari" (walk)** - Fetch successive images closer to the identified objects to refine our understanding.
+* **Walk** - Fetch successive images closer to the identified objects to refine our understanding.
 * **Fine Object identification** - Apply a second layer of computer vision to precisely classify the objects.
 * **Map Creation** - Generate a geodataframe mapping all identified objects, complete with labels.
 
@@ -51,8 +51,8 @@ Considering the problem of street pole identification and categorization (betwee
     * DATASET_NAME (Optional): Target blob path to save images, if using dataset population.
     ```
     # Using a conda environment
-    conda create -n sightlinesafari python=3.11.8
-    conda activate sightlinesafari
+    conda create -n StreetObjectFinder python=3.11.8
+    conda activate StreetObjectFinder
 
     conda env config vars set API_KEY='street-view-static-API-key'
     conda env config vars set API_URL_SECRET='street-view-static-API-signing-secret'
@@ -64,7 +64,7 @@ Considering the problem of street pole identification and categorization (betwee
 
     # Refresh env
     conda deactivate
-    conda activate sightlinesafari
+    conda activate StreetObjectFinder
     ```
 
 * **Install Dependencies**: Install the required dependencies by running:
@@ -110,7 +110,7 @@ This is called monocular depth estimation and it is a common task in computer vi
 
 The output of the depth estimation model is still not sufficient to estimate the position since the model gives us a depth map of the full image. Because of this we have to crop the image to only contain the bounding box corresponding to the target object. However, the bounding box also contains the backgorund of the object, so we cannot just compute the average depth inside the bounding box or something alike. To further "focus" our depth estimation on the object only, classical computer vision approaches such as edge detection are used to eliminate the background and "select" the object, finally the mode of the depth estimate for the remaining area is computed to obtain a final depth estimate.
 
-### Safaris (Walks)
+### Walks
 
 The main barrier for classification is that objects identified may be far from the source position of the panorama, in which case it will be hard to classify them. To solve this issue, we need to "walk" towards objects by fetching a google street view image that is closer to this object. At first glance, this may seem like an easy task considering that we have the estimated position of this object, however, in practice this is not as easy as it seems. 
 
